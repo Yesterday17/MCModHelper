@@ -3,11 +3,11 @@ import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
 import './themes/dynamic_theme.dart';
 import './themes/select_theme.dart';
+import './utilities/tinkers_forging_calculator_.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return DynamicTheme(
@@ -78,14 +78,14 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SelectTheme()));
-          // DynamicTheme.of(context).toggleBrightness();
-          // DynamicTheme.of(context).setThemeColor(
-          //     DynamicTheme.of(context).data == 'green' ? 'blue' : 'green');
+              context,
+              MaterialPageRoute(
+                  builder:
+                      (context) => /* ThemeSelector() */ TinkersForgingCalcualtor()));
         },
-        tooltip: 'Increment',
+        tooltip: 'Utils',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
