@@ -8,14 +8,17 @@ import 'dart:collection';
 class Themes {
   /// Blue Theme
   ThemeData _blue = ThemeData(
+    brightness: Brightness.light,
     primarySwatch: Colors.blue,
   );
 
   ThemeData _green = ThemeData(
+    brightness: Brightness.light,
     primarySwatch: Colors.green,
   );
 
   ThemeData _dark = ThemeData(
+    brightness: Brightness.dark,
     primarySwatch: Colors.blueGrey,
   );
 

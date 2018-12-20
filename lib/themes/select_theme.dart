@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import './themes.dart';
 import './dynamic_theme.dart';
 
-class SelectTheme extends StatelessWidget {
+class ThemeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
