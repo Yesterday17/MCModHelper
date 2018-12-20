@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
 import './themes/dynamic_theme.dart';
+import './themes/select_theme.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,41 +13,40 @@ class MyApp extends StatelessWidget {
     return DynamicTheme(
       themedWidgetBuilder: (content, theme) {
         return MaterialApp(
-          title: 'MCModHelper',
+          title: 'Modded Minecraft Helper',
           theme: theme,
-          home: MyHomePage(title: 'MCModHelper'),
+          home: HomePage(title: 'Modded Minecraft Helper'),
         );
       },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+class HomePage extends StatefulWidget {
+  HomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(DynamicTheme.of(context).isDark
+                ? OpenIconicIcons.sun
+                : OpenIconicIcons.moon),
+            onPressed: () {
+              DynamicTheme.of(context).toggleBrightness();
+            },
+          )
+        ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -69,16 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               '${DynamicTheme.of(context).brightness}\n${DynamicTheme.of(context).data}',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme.of(context).textTheme.body2,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SelectTheme()));
           // DynamicTheme.of(context).toggleBrightness();
-          DynamicTheme.of(context).setThemeColor(
-              DynamicTheme.of(context).data == 'green' ? 'blue' : 'green');
+          // DynamicTheme.of(context).setThemeColor(
+          //     DynamicTheme.of(context).data == 'green' ? 'blue' : 'green');
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

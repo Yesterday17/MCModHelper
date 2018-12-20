@@ -2,7 +2,7 @@
 /// by Yesterday17
 import 'package:flutter/material.dart';
 import '../preferences.dart';
-import './default.dart';
+import './themes.dart';
 
 typedef Widget ThemedWidgetBuilder(BuildContext context, ThemeData data);
 
