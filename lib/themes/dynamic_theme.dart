@@ -12,7 +12,7 @@ class DynamicTheme extends StatefulWidget {
   const DynamicTheme({Key key, this.themedWidgetBuilder}) : super(key: key);
 
   @override
-  DynamicThemeState createState() => new DynamicThemeState();
+  DynamicThemeState createState() => DynamicThemeState();
 
   static DynamicThemeState of(BuildContext context) {
     return context.ancestorStateOfType(const TypeMatcher<DynamicThemeState>());

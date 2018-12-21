@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
 import './themes/dynamic_theme.dart';
-import './themes/select_theme.dart';
+import './drawer.dart';
 import './utilities/tinkers_forging_calculator_.dart';
 
 void main() => runApp(MyApp());
@@ -48,24 +48,9 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+      drawer: DrawerInstance(),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -78,12 +63,13 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder:
-                      (context) => /* ThemeSelector() */ TinkersForgingCalcualtor()));
+            context,
+            MaterialPageRoute(
+              builder: (context) => TinkersForgingCalcualtor(),
+            ),
+          );
         },
-        tooltip: 'Utils',
+        tooltip: '锻造计算器',
         child: Icon(Icons.add),
       ),
     );
