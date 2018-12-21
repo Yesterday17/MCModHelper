@@ -3,74 +3,76 @@
 ///
 
 import 'package:flutter/material.dart';
-import '../utils/enum.dart';
 
 class _HitPair {
-  int value;
   String name;
+  int value;
 
   _HitPair(this.value, this.name);
+
+  @override
+  String toString() {
+    return name;
+  }
 }
 
-class _Hits extends Enum<_HitPair> {
-  const _Hits(_HitPair val) : super(val);
-
+abstract class _Hits {
   /// 轻击
-  static _Hits hitLight = _Hits(_HitPair(
+  static _HitPair hitLight = _HitPair(
     -3,
     '轻击',
-  ));
+  );
 
   /// 击打
-  static _Hits hitMedium = _Hits(_HitPair(
+  static _HitPair hitMedium = _HitPair(
     -6,
     '击打',
-  ));
+  );
 
   /// 重击
-  static _Hits hitHard = _Hits(_HitPair(
+  static _HitPair hitHard = _HitPair(
     -9,
     '重击',
-  ));
+  );
 
   /// 牵拉
-  static _Hits draw = _Hits(_HitPair(
+  static _HitPair draw = _HitPair(
     -15,
     '牵拉',
-  ));
+  );
 
   /// 冲压
-  static _Hits punch = _Hits(_HitPair(
+  static _HitPair punch = _HitPair(
     2,
     '冲压',
-  ));
+  );
 
   /// 弯曲
-  static _Hits bend = _Hits(_HitPair(
+  static _HitPair bend = _HitPair(
     7,
     '弯曲',
-  ));
+  );
 
   /// 镦锻
-  static _Hits upset = _Hits(_HitPair(
+  static _HitPair upset = _HitPair(
     13,
     '镦锻',
-  ));
+  );
 
   /// 收缩
-  static _Hits shrink = _Hits(_HitPair(
+  static _HitPair shrink = _HitPair(
     16,
     '收缩',
-  ));
+  );
 
   /// 留空
-  static _Hits empty = _Hits(_HitPair(
+  static _HitPair empty = _HitPair(
     0,
     '留空',
-  ));
+  );
 
-  static List<_Hits> toList() {
-    List<_Hits> list = List();
+  static List<_HitPair> toList() {
+    List<_HitPair> list = List();
     list.add(hitLight);
     list.add(hitMedium);
     list.add(hitHard);
@@ -88,12 +90,80 @@ class _Hits extends Enum<_HitPair> {
 /// Calculator class
 ///
 class _Calculate {
-  static int getSum(List<int> list, {int getSum = 0}) {
-    //
+  List<_HitPair> hits = List();
+  int _hitCount = 1;
+
+  int get hitCount => _hitCount;
+  bool get canHitEmpty => _hitCount == 3;
+  bool get canHit => _hitCount <= 3;
+
+  List<List<_HitPair>> ans = [];
+
+  static _Calculate instance = _Calculate();
+
+  int getSum(List<_HitPair> list, {int getSum = 0}) {
+    int sum = 0;
+    for (_HitPair hit in list) {
+      sum += hit.value;
+    }
+    return sum + getSum;
+  }
+
+  void hit(_HitPair hit) {
+    _hitCount++;
+    if (hit.value != 0) hits.insert(0, hit);
+    if (hitCount > 3) {
+      ans = calculate();
+    }
+  }
+
+  void unhit() {
+    if (_hitCount > 1) {
+      _hitCount--;
+      hits = hits.sublist(1);
+    }
+    this.ans.clear();
+  }
+
+  void reset() {
+    this.hits.clear();
+    this.ans.clear();
+    this._hitCount = 1;
   }
 
   /// calculate
-  static int calc() {}
+  List<List<_HitPair>> calculate() {
+    int value = -getSum(hits), count = 10;
+
+    List<List<_HitPair>> total = [
+      [_Hits.empty]
+    ];
+    List<List<_HitPair>> tmp = [];
+    List<List<_HitPair>> result = [[]];
+
+    for (int i = 0; i < count; i++) {
+      for (List<_HitPair> j in total) {
+        for (_HitPair hit in _Hits.toList()) {
+          if (hit == _Hits.empty) continue;
+
+          int v = getSum(j, getSum: hit.value);
+          if (v > -150 && v < 150) {
+            List<_HitPair> tmpJ = j.sublist(0);
+            tmpJ.add(hit);
+            if (getSum(j, getSum: hit.value) == value) {
+              tmpJ.addAll(hits);
+              result.add(tmpJ.sublist(1));
+            } else
+              tmp.add(tmpJ);
+          }
+        }
+      }
+      total = tmp.sublist(0);
+      tmp.clear();
+      if (result.length > 1) break;
+    }
+    return result.sublist(1);
+  }
 }
 
 class TinkersForgingCalcualtor extends StatefulWidget {
@@ -102,45 +172,173 @@ class TinkersForgingCalcualtor extends StatefulWidget {
 }
 
 class _State extends State<TinkersForgingCalcualtor> {
-  final List<_Hits> _hitOperation = _Hits.toList();
+  final List<_HitPair> _hitOperation = _Hits.toList();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tinker\'s Forging 锻造计算器'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(20.0),
-            child: Text('Calculator EditText Area.'),
-          ),
-          Expanded(
-            child: GridView.builder(
-              itemCount: 9,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-              ),
-              itemBuilder: (context, index) {
-                return GridTile(
-                  child: FlatButton(
-                    onPressed: () {
-                      return 1;
-                    },
-                    child: Center(
-                      child: Text(
-                        _hitOperation[index].value.name,
-                        style: Theme.of(context).textTheme.title,
+        appBar: AppBar(
+          title: Text('Tinker\'s Forging 锻造计算器'),
+        ),
+        body: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                constraints: BoxConstraints.expand(
+                  height:
+                      Theme.of(context).textTheme.display1.fontSize * 1.1 + 110,
+                ),
+                color: Theme.of(context).bottomAppBarColor,
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 0.0),
+                          child: Text(
+                            _Calculate.instance.canHit
+                                ? '请输入倒数第 ${_Calculate.instance.hitCount} 次锻造操作：'
+                                : '锻造完成！',
+                            style: Theme.of(context).textTheme.subhead.merge(
+                                  TextStyle(color: Colors.greenAccent),
+                                ),
+                          ),
+                        ),
                       ),
-                    ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 0.0),
+                          child: Text(
+                              '目前的锻造： ${_Calculate.instance.hitCount == 1 ? '无' : _Calculate.instance.hits.join(', ')}'),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 4.0),
+                          child:
+                              Text(_Calculate.instance.canHit ? '' : '锻造方案如下：'),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _Calculate.instance.ans.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              dense: true,
+                              title: Text(
+                                  '方案${index + 1}：${_Calculate.instance.ans[index].join(' -> ')}'),
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('锻造方案'),
+                                        content: Text(
+                                          _Calculate.instance.ans[index]
+                                              .join('->'),
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('关闭'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+              Container(
+                alignment: FractionalOffset.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: (() {
+                    List<Widget> result = <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          MaterialButton(
+                            minWidth: MediaQuery.of(context).size.width / 2,
+                            child: Text('撤销'),
+                            onPressed: _Calculate.instance.hitCount == 1
+                                ? null
+                                : () {
+                                    setState(() {
+                                      _Calculate.instance.unhit();
+                                    });
+                                  },
+                          ),
+                          MaterialButton(
+                            minWidth: MediaQuery.of(context).size.width / 2,
+                            child: Text('重置'),
+                            onPressed: () {
+                              setState(() {
+                                _Calculate.instance.reset();
+                              });
+                            },
+                          ),
+                        ],
+                      )
+                    ];
+                    List<Widget> rowWidgets = <Widget>[];
+                    int i = 0;
+                    for (_HitPair hit in _hitOperation) {
+                      rowWidgets.add(
+                        MaterialButton(
+                          height: MediaQuery.of(context).size.width / 3,
+                          minWidth: MediaQuery.of(context).size.width / 3,
+                          onPressed: (!_Calculate.instance.canHit ||
+                                  !_Calculate.instance.canHitEmpty &&
+                                      hit.value == 0)
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _Calculate.instance.hit(hit);
+                                  });
+                                },
+                          child: Center(
+                            child: Text(
+                              hit.name,
+                              textScaleFactor: 1.3,
+                            ),
+                          ),
+                        ),
+                      );
+
+                      i++;
+
+                      if (i / 3 == 1) {
+                        i = 0;
+                        result.add(Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: rowWidgets,
+                        ));
+                        rowWidgets = <Widget>[];
+                      }
+                    }
+                    return result;
+                  })(),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
