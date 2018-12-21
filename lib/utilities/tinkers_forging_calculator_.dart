@@ -204,9 +204,7 @@ class _State extends State<TinkersForgingCalcualtor> {
                             _Calculate.instance.canHit
                                 ? '请输入倒数第 ${_Calculate.instance.hitCount} 次锻造操作：'
                                 : '锻造完成！',
-                            style: Theme.of(context).textTheme.subhead.merge(
-                                  TextStyle(color: Colors.greenAccent),
-                                ),
+                            style: Theme.of(context).textTheme.subhead,
                           ),
                         ),
                       ),
@@ -214,7 +212,7 @@ class _State extends State<TinkersForgingCalcualtor> {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding:
-                              const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 0.0),
+                              const EdgeInsets.fromLTRB(8.0, 6.0, 0.0, 0.0),
                           child: Text(
                               '目前的锻造： ${_Calculate.instance.hitCount == 1 ? '无' : _Calculate.instance.hits.join(', ')}'),
                         ),
@@ -223,7 +221,7 @@ class _State extends State<TinkersForgingCalcualtor> {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding:
-                              const EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 4.0),
+                              const EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 8.0),
                           child:
                               Text(_Calculate.instance.canHit ? '' : '锻造方案如下：'),
                         ),
@@ -235,13 +233,15 @@ class _State extends State<TinkersForgingCalcualtor> {
                             return ListTile(
                               dense: true,
                               title: Text(
-                                  '方案${index + 1}：${_Calculate.instance.ans[index].join(' -> ')}'),
+                                '方案${index + 1}：${_Calculate.instance.ans[index].join(' -> ')}',
+                                softWrap: false,
+                              ),
                               onTap: () {
                                 showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: Text('锻造方案'),
+                                        title: Text('锻造方案${index + 1}'),
                                         content: Text(
                                           _Calculate.instance.ans[index]
                                               .join('->'),
